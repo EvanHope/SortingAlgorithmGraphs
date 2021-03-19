@@ -15,4 +15,9 @@ public class Bar : MonoBehaviour
     {
         
     }
+
+    public void ColorSet()
+    {
+        gameObject.GetComponent<SpriteRenderer>().color = Color.blue;
+    }
 }
