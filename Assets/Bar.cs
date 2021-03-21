@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Bar : MonoBehaviour
 {
+    public Color selectedColor;
+    public Color unselectedColor;
     // Start is called before the first frame update
     void Start()
     {
@@ -16,8 +18,12 @@ public class Bar : MonoBehaviour
         
     }
 
-    public void ColorSet()
+    public void ColorSetSelect()
     {
-        gameObject.GetComponent<SpriteRenderer>().color = Color.blue;
+        gameObject.GetComponent<SpriteRenderer>().color = selectedColor;
+    }
+    public void ColorSetUnselect()
+    {
+        gameObject.GetComponent<SpriteRenderer>().color = unselectedColor;
     }
 }

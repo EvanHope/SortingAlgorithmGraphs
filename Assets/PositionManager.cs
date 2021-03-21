@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class PositionManager : MonoBehaviour
 {
+    public float stepTime;
+
     public float startPos;
     public float incremntDist;
     public GameObject bar;
@@ -34,7 +36,7 @@ public class PositionManager : MonoBehaviour
         for (int i = 0; i < bars.Length; i++)
         {
             bars[i] = Instantiate(bar, positions[i], Quaternion.identity);
-            bars[i].transform.localScale = new Vector3(.025f, Random.Range(.1f, 4.9f));
+            bars[i].transform.localScale = new Vector3(.1f, Random.Range(.5f, 19f));
         }
     }
 
@@ -56,8 +58,13 @@ public class PositionManager : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.A))
         {
-            SelectionSort();
-            UpdateAllBars();
+            StartCoroutine(SelectionSorter(stepTime));
+            //UpdateAllBars();
+        }
+
+        if (Input.GetKeyDown(KeyCode.W))
+        {
+            bars[2].GetComponent<Bar>().ColorSetSelect();
         }
     }
 
@@ -65,12 +72,12 @@ public class PositionManager : MonoBehaviour
     //Sorting Functions
     void SelectionSort()
     {
-        float min = 10;
+        float min = 10000f;
         int tempI = 0;
         GameObject minBar = null;
         for (int i = 0; i < bars.Length - 1; i++)
         {
-            min = 10;
+            min = 10000;
             for (int j = i + 1; j < bars.Length; j++)
             {
                 if(bars[j].transform.localScale.y < min)
@@ -83,6 +90,42 @@ public class PositionManager : MonoBehaviour
             //swap
             bars[tempI] = bars[i];
             bars[i] = minBar;
+        }
+    }
+
+    IEnumerator SelectionSorter(float waitTime)
+    {
+        while(true)
+        {
+
+            float min = 10000f;
+            int tempI = 0;
+            GameObject minBar = null;
+            for (int i = 0; i < bars.Length - 1; i++)
+            {
+                UpdateAllBars();
+                yield return new WaitForSeconds(waitTime);
+                bars[tempI].GetComponent<Bar>().ColorSetUnselect();
+                bars[i].GetComponent<Bar>().ColorSetUnselect();
+
+                min = 10000;
+                for (int j = i + 1; j < bars.Length; j++)
+                {
+                    if (bars[j].transform.localScale.y < min)
+                    {
+                        minBar = bars[j];
+                        min = bars[j].transform.localScale.y;
+                        tempI = j;
+                    }
+                }
+                //swap
+                bars[i].GetComponent<Bar>().ColorSetSelect();
+                bars[tempI] = bars[i];
+                
+                bars[tempI].GetComponent<Bar>().ColorSetSelect();
+                bars[i] = minBar;
+            }
+            yield break;
         }
     }
 }
