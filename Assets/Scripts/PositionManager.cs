@@ -13,6 +13,9 @@ public class PositionManager : MonoBehaviour
     GameObject[] bars = new GameObject[150];
     Vector2[] positions = new Vector2[150];
 
+    public SelectionSort selectionSortScript;
+    public BubbleSort bubbleSortScript;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -31,6 +34,14 @@ public class PositionManager : MonoBehaviour
         }
     }
 
+    void DebugBarArray()
+    {
+        for(int i = 0; i < bars.Length;i++)
+        {
+            Debug.Log(bars[i].transform.localScale.y);
+        }
+    }
+
     void BarCreator()
     {
         for (int i = 0; i < bars.Length; i++)
@@ -40,7 +51,15 @@ public class PositionManager : MonoBehaviour
         }
     }
 
-    void UpdateAllBars()
+    void BarRandomizer()
+    {
+        for (int i = 0; i < bars.Length; i++)
+        {
+            bars[i].transform.localScale = new Vector3(.1f, Random.Range(.5f, 19f));
+        }
+    }
+
+    public void UpdateAllBars()
     {
         for (int i = 0; i < bars.Length; i++)
         {
@@ -58,74 +77,21 @@ public class PositionManager : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.A))
         {
-            StartCoroutine(SelectionSorter(stepTime));
+            StartCoroutine(selectionSortScript.SelectionSorter(bars));
             //UpdateAllBars();
         }
-
         if (Input.GetKeyDown(KeyCode.W))
         {
-            bars[2].GetComponent<Bar>().ColorSetSelect();
+            StartCoroutine(bubbleSortScript.BubbleSorter(bars));
         }
-    }
 
-
-    //Sorting Functions
-    void SelectionSort()
-    {
-        float min = 10000f;
-        int tempI = 0;
-        GameObject minBar = null;
-        for (int i = 0; i < bars.Length - 1; i++)
+        if (Input.GetKeyDown(KeyCode.D))
         {
-            min = 10000;
-            for (int j = i + 1; j < bars.Length; j++)
-            {
-                if(bars[j].transform.localScale.y < min)
-                {
-                    minBar = bars[j];
-                    min = bars[j].transform.localScale.y;
-                    tempI = j;
-                }
-            }
-            //swap
-            bars[tempI] = bars[i];
-            bars[i] = minBar;
+            DebugBarArray();
         }
-    }
-
-    IEnumerator SelectionSorter(float waitTime)
-    {
-        while(true)
+        if (Input.GetKeyDown(KeyCode.S))
         {
-
-            float min = 10000f;
-            int tempI = 0;
-            GameObject minBar = null;
-            for (int i = 0; i < bars.Length - 1; i++)
-            {
-                UpdateAllBars();
-                yield return new WaitForSeconds(waitTime);
-                bars[tempI].GetComponent<Bar>().ColorSetUnselect();
-                bars[i].GetComponent<Bar>().ColorSetUnselect();
-
-                min = 10000;
-                for (int j = i + 1; j < bars.Length; j++)
-                {
-                    if (bars[j].transform.localScale.y < min)
-                    {
-                        minBar = bars[j];
-                        min = bars[j].transform.localScale.y;
-                        tempI = j;
-                    }
-                }
-                //swap
-                bars[i].GetComponent<Bar>().ColorSetSelect();
-                bars[tempI] = bars[i];
-                
-                bars[tempI].GetComponent<Bar>().ColorSetSelect();
-                bars[i] = minBar;
-            }
-            yield break;
+            BarRandomizer();
         }
     }
 }
